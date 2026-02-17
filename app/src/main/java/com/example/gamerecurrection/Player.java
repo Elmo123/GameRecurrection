@@ -14,6 +14,7 @@ public class Player extends GameObject {
     private WorldMap world;
     private TileSet tileSet;
     private int tileSize;
+    private static final float CORNER_ALLOWANCE = 6f;
 
     float x, y;
     float width = 64;
@@ -85,10 +86,8 @@ public class Player extends GameObject {
         float newX = x + speedX;
 
         boolean hitX =
-                isTileSolid(world, tileSet, newX, y, tileSize) ||
-                        isTileSolid(world, tileSet, newX + width, y, tileSize) ||
-                        isTileSolid(world, tileSet, newX, y + height, tileSize) ||
-                        isTileSolid(world, tileSet, newX + width, y + height, tileSize);
+                isTileSolid(world, tileSet, newX, y + CORNER_ALLOWANCE, tileSize) ||
+                        isTileSolid(world, tileSet, newX, y + height - CORNER_ALLOWANCE, tileSize);
 
         if (!hitX) {
             x = newX;
@@ -98,10 +97,8 @@ public class Player extends GameObject {
         float newY = y + speedY;
 
         boolean hitY =
-                isTileSolid(world, tileSet, x, newY, tileSize) ||
-                        isTileSolid(world, tileSet, x + width, newY, tileSize) ||
-                        isTileSolid(world, tileSet, x, newY + height, tileSize) ||
-                        isTileSolid(world, tileSet, x + width, newY + height, tileSize);
+                isTileSolid(world, tileSet, x + CORNER_ALLOWANCE, newY, tileSize) ||
+                        isTileSolid(world, tileSet, x + width - CORNER_ALLOWANCE, newY, tileSize);
 
         if (!hitY) {
             y = newY;

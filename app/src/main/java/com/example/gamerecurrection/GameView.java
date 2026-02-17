@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
@@ -22,6 +23,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     private Player player;
     private Helpers helpers = new Helpers();
     private final int TILE_SIZE = 256;
+    private Joystick joystick;
 
     public GameView(Context context) {
         super(context);
@@ -34,13 +36,13 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
             String worldStr = helpers.loadJSON(context, "world.json");
             String tilesStr = helpers.loadJSON(context, "tileset.json");
 
+            joystick = new Joystick(200, 200, 150, 60);
             world = new WorldMap(worldJson);
             tileSet = new TileSet(context, tilesJson, TILE_SIZE, TILE_SIZE);
-            player = new Player(context,300, 300, world, tileSet, TILE_SIZE);
+            player = new Player(context,300, 300, world, tileSet, TILE_SIZE, joystick);
 
             objectManager.initSpatialGrid(world.width, world.height, TILE_SIZE);
             objectManager.add(player);
-
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -85,6 +87,8 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         Canvas canvas = getHolder().lockCanvas();
         drawWorld(canvas);
         objectManager.drawAll(canvas, cameraX, cameraY);
+
+        joystick.draw(canvas);
         getHolder().unlockCanvasAndPost(canvas);
     }
 
@@ -119,5 +123,11 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
                 canvas.drawBitmap(tile.bitmap, drawX, drawY, null);
             }
         }
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        joystick.onTouch(event);
+        return true;
     }
 }

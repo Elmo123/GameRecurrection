@@ -14,6 +14,7 @@ public class Player extends GameObject {
     private WorldMap world;
     private TileSet tileSet;
     private int tileSize;
+    private Joystick joystick;
     private static final float CORNER_ALLOWANCE = 6f;
 
     float x, y;
@@ -22,7 +23,7 @@ public class Player extends GameObject {
     float speedX, speedY;
 
 
-    public Player(Context ctx, float x, float y, WorldMap world, TileSet tileSet, int tileSize) {
+    public Player(Context ctx, float x, float y, WorldMap world, TileSet tileSet, int tileSize, Joystick joystick) {
         super(x, y);
 
         try (InputStream is = ctx.getAssets().open("rec_ghost_idle.png")) {
@@ -34,10 +35,14 @@ public class Player extends GameObject {
         this.world = world;
         this.tileSet = tileSet;
         this.tileSize = tileSize;
+        this.joystick = joystick;
     }
 
     @Override
     public void update() {
+        speedX = joystick.dx * 5f;
+        speedY = joystick.dy * 5f;
+
         move(world, tileSet, tileSize);
     }
 

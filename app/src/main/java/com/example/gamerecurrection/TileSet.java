@@ -22,6 +22,7 @@ public class TileSet {
                 String key = keys.next();
                 JSONObject tileObj = json.getJSONObject(key);
                 String texture = tileObj.getString("texture");
+                boolean solid = tileObj.optBoolean("solid", false);
 
                 Bitmap bmp = BitmapFactory.decodeStream(
                         context.getAssets().open(texture)
@@ -31,7 +32,7 @@ public class TileSet {
                     System.out.println("FAILED to decode bitmap: " + texture);
                 }
 
-                tiles.put(Integer.parseInt(key), new Tile(bmp, tileW, tileH));
+                tiles.put(Integer.parseInt(key), new Tile(bmp, tileW, tileH, solid));
             }
 
         } catch (Exception e) {

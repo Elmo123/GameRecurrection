@@ -18,7 +18,8 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
     private int cameraX = 0;
     private int cameraY = 0;
-
+    private GameObjectManager objectManager = new GameObjectManager();
+    private Player player;
     private Helpers helpers = new Helpers();
     private final int TILE_SIZE = 256;
 
@@ -35,6 +36,10 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
             world = new WorldMap(worldJson);
             tileSet = new TileSet(context, tilesJson, TILE_SIZE, TILE_SIZE);
+            player = new Player(context,300, 300, world, tileSet, TILE_SIZE);
+
+            objectManager.initSpatialGrid(world.width, world.height, TILE_SIZE);
+            objectManager.add(player);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -65,13 +70,21 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         gameLoop.stop();
     }
 
-    public void update() {}
+    //@Override
+    public void update() {
+        objectManager.updateAll();
+
+        // Camera moves with player
+        // cameraX = (int)(player.getX() - getWidth() / 2);
+        // cameraY = (int)(player.getY() - getHeight() / 2);
+    }
 
     public void render() {
         if (!getHolder().getSurface().isValid()) return;
 
         Canvas canvas = getHolder().lockCanvas();
         drawWorld(canvas);
+        objectManager.drawAll(canvas, cameraX, cameraY);
         getHolder().unlockCanvasAndPost(canvas);
     }
 

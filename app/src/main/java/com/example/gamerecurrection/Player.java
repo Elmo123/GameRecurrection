@@ -11,27 +11,39 @@ import java.io.InputStream;
 public class Player extends GameObject {
 
     private Bitmap sprite;
+    private Bitmap[] frames;   // 4 animation frames
     private WorldMap world;
     private TileSet tileSet;
     private int tileSize;
     private Joystick joystick;
     private static final float CORNER_ALLOWANCE = 6f;
-
-    float x, y;
-    float width = 64;
-    float height = 64;
+    final float width = 192;
+    final float height = 256;
     float speedX, speedY;
-
+    private final int frameCnt = 4;
 
     public Player(Context ctx, float x, float y, WorldMap world, TileSet tileSet, int tileSize, Joystick joystick) {
         super(x, y);
 
         try (InputStream is = ctx.getAssets().open("rec_ghost_idle.png")) {
-            sprite = BitmapFactory.decodeStream(is);
+            Bitmap sheet = BitmapFactory.decodeStream(is);
+
+            frames = new Bitmap[frameCnt];
+            int frameWidth = sheet.getWidth() / frameCnt;
+            // Slice into 4 frames
+            for (int i = 0; i < frameCnt; i++) {
+                var bitmap = Bitmap.createBitmap(sheet, i * frameWidth, 0, frameWidth, sheet.getHeight());
+                frames[i] = Bitmap.createScaledBitmap(bitmap, (int)width, (int)height, true);
+            }
+
+            // Use first frame
+            sprite = frames[0];
+
         } catch (IOException e) {
             e.printStackTrace();
             sprite = null;
         }
+
         this.world = world;
         this.tileSet = tileSet;
         this.tileSize = tileSize;

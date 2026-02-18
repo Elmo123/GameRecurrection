@@ -77,8 +77,8 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         objectManager.updateAll();
 
         // Camera moves with player
-        // cameraX = (int)(player.getX() - getWidth() / 2);
-        // cameraY = (int)(player.getY() - getHeight() / 2);
+         cameraX = (int)(player.getX() - getWidth() / 2);
+         cameraY = (int)(player.getY() - getHeight() / 2);
     }
 
     public void render() {

@@ -17,13 +17,13 @@ public class Player extends GameObject {
     private int tileSize;
     private Joystick joystick;
     private static final float CORNER_ALLOWANCE = 6f;
-    final float width = 192;
-    final float height = 256;
     float speedX, speedY;
     private final int frameCnt = 4;
 
     public Player(Context ctx, float x, float y, WorldMap world, TileSet tileSet, int tileSize, Joystick joystick) {
         super(x, y);
+        this.width = 192;
+        this.height = 256;
 
         try (InputStream is = ctx.getAssets().open("rec_ghost_idle.png")) {
             Bitmap sheet = BitmapFactory.decodeStream(is);

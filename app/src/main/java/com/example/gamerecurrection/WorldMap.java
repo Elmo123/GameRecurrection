@@ -7,12 +7,14 @@ public class WorldMap {
 
     public int width;
     public int height;
+    public JSONArray spawnPoint;
     public int[][] tiles;
 
     public WorldMap(JSONObject json) {
         try {
             width = json.getInt("width");
             height = json.getInt("height");
+            spawnPoint = json.getJSONArray("spawn");
 
             JSONArray rows = json.getJSONArray("tiles");
             tiles = new int[rows.length()][];

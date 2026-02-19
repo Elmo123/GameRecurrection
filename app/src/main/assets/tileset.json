@@ -1,5 +1,5 @@
 {
   "1": { "texture": "tile_gray.png", "solid": "false" },
   "2": { "texture": "tile_purple.png", "solid": "false" },
-  "3": { "texture": "tile_green.png", "solid": "false" }
+  "3": { "texture": "tile_green.png", "solid": "true" }
 }

@@ -33,13 +33,14 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
             JSONObject worldJson = new JSONObject(helpers.loadJSON(context, "world.json"));
             JSONObject tilesJson = new JSONObject(helpers.loadJSON(context, "tileset.json"));
 
-            String worldStr = helpers.loadJSON(context, "world.json");
-            String tilesStr = helpers.loadJSON(context, "tileset.json");
-
             joystick = new Joystick(200, 200, 150, 60);
             world = new WorldMap(worldJson);
             tileSet = new TileSet(context, tilesJson, TILE_SIZE, TILE_SIZE);
-            player = new Player(context,300, 300, world, tileSet, TILE_SIZE, joystick);
+
+            int spawnPointX = world.spawnPoint.getInt(0) * TILE_SIZE + (TILE_SIZE / 2);
+            int spawnPointY = world.spawnPoint.getInt(1) * TILE_SIZE + (TILE_SIZE / 2);
+
+            player = new Player(context,spawnPointX, spawnPointY, world, tileSet, TILE_SIZE, joystick);
 
             objectManager.initSpatialGrid(world.width, world.height, TILE_SIZE);
             objectManager.add(player);

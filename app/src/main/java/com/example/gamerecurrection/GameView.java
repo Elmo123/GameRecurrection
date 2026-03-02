@@ -8,6 +8,7 @@ import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class GameView extends SurfaceView implements SurfaceHolder.Callback {
@@ -33,6 +34,11 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
             JSONObject worldJson = new JSONObject(helpers.loadJSON(context, "world.json"));
             JSONObject tilesJson = new JSONObject(helpers.loadJSON(context, "tileset.json"));
 
+            /* Edit Json
+            JSONArray row = worldJson.getJSONArray("tiles");
+            row.put(32, 1);
+            /* */
+
             joystick = new Joystick(200, 200, 150, 60);
             world = new WorldMap(worldJson);
             tileSet = new TileSet(context, tilesJson, TILE_SIZE, TILE_SIZE);
@@ -44,6 +50,10 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
             objectManager.initSpatialGrid(world.width, world.height, TILE_SIZE);
             objectManager.add(player);
+
+            /* Set tile helper
+            world.setTile(32, 32, 1);
+            /* */
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -78,8 +88,8 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         objectManager.updateAll();
 
         // Camera moves with player
-         cameraX = (int)(player.getX() - getWidth() / 2);
-         cameraY = (int)(player.getY() - getHeight() / 2);
+         cameraX = (int)(player.getHitboxX() - getWidth() / 2);
+         cameraY = (int)(player.getHitboxY() - getHeight() / 2);
     }
 
     public void render() {

@@ -1,6 +1,7 @@
 package com.example.gamerecurrection;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 public class WorldMap {
@@ -9,14 +10,18 @@ public class WorldMap {
     public int height;
     public JSONArray spawnPoint;
     public int[][] tiles;
+    private JSONArray jsonTiles; // store original JSON reference
 
-    public WorldMap(JSONObject json) {
+
+    public WorldMap(JSONObject json) throws JSONException {
         try {
-            width = json.getInt("width");
-            height = json.getInt("height");
             spawnPoint = json.getJSONArray("spawn");
 
             JSONArray rows = json.getJSONArray("tiles");
+            height = rows.length();
+            width = rows.getJSONArray(0).length();
+            jsonTiles = rows;
+
             tiles = new int[rows.length()][];
 
             for (int y = 0; y < rows.length(); y++) {
@@ -33,4 +38,12 @@ public class WorldMap {
             throw new RuntimeException("Failed to parse world.json");
         }
     }
+
+    public void setTile(int x, int y, int value) throws JSONException {
+        if (x < 0 || y < 0 || x >= width || y >= height) return;
+
+        tiles[y][x] = value;                       // update internal map
+        jsonTiles.getJSONArray(y).put(x, value);   // update JSON map
+    }
+
 }

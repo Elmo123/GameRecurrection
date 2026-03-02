@@ -4,29 +4,41 @@ import android.graphics.Canvas;
 
 public abstract class GameObject {
 
+    // Sprite position (top-left)
     protected float x, y;
-    protected int width = 32;
-    protected int height = 32;
 
+    // Sprite size (for drawing)
+    protected int spriteWidth = 32;
+    protected int spriteHeight = 32;
+
+    // Hitbox size
+    protected int hitboxWidth = 32;
+    protected int hitboxHeight = 32;
+
+    // Hitbox offset from sprite origin
+    protected float hitboxOffsetX = 0;
+    protected float hitboxOffsetY = 0;
 
     public GameObject(float x, float y) {
         this.x = x;
         this.y = y;
     }
 
+    // Hitbox getters
+    public float getHitboxX() { return x + hitboxOffsetX; }
+    public float getHitboxY() { return y + hitboxOffsetY; }
+    public int getHitboxWidth() { return hitboxWidth; }
+    public int getHitboxHeight() { return hitboxHeight; }
+
+    public boolean intersects(GameObject other) {
+        return getHitboxX() < other.getHitboxX() + other.getHitboxWidth() &&
+                getHitboxX() + getHitboxWidth() > other.getHitboxX() &&
+                getHitboxY() < other.getHitboxY() + other.getHitboxHeight() &&
+                getHitboxY() + getHitboxHeight() > other.getHitboxY();
+    }
+
     public abstract void update();
     public abstract void draw(Canvas canvas, int cameraX, int cameraY);
 
-    public float getX() { return x; }
-    public float getY() { return y; }
-    public boolean intersects(GameObject other) {
-        return x < other.x + other.width &&
-                x + width > other.x &&
-                y < other.y + other.height &&
-                y + height > other.y;
-    }
-
-    public void onCollision(GameObject other) {
-        // default: do nothing
-    }
+    public void onCollision(GameObject other) {}
 }

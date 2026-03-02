@@ -22,8 +22,15 @@ public class Player extends GameObject {
 
     public Player(Context ctx, float x, float y, WorldMap world, TileSet tileSet, int tileSize, Joystick joystick) {
         super(x, y);
-        this.width = 192;
-        this.height = 256;
+        this.spriteWidth = 192;
+        this.spriteHeight = 256;
+
+        this.hitboxWidth = 96;
+        this.hitboxHeight = 96;
+
+        // Center horizontally, align bottom
+        this.hitboxOffsetX = (spriteWidth - hitboxWidth) / 2f;
+        this.hitboxOffsetY = spriteHeight - hitboxHeight;
 
         try (InputStream is = ctx.getAssets().open("rec_ghost_idle.png")) {
             Bitmap sheet = BitmapFactory.decodeStream(is);
@@ -33,7 +40,7 @@ public class Player extends GameObject {
             // Slice into 4 frames
             for (int i = 0; i < frameCnt; i++) {
                 var bitmap = Bitmap.createBitmap(sheet, i * frameWidth, 0, frameWidth, sheet.getHeight());
-                frames[i] = Bitmap.createScaledBitmap(bitmap, (int)width, (int)height, true);
+                frames[i] = Bitmap.createScaledBitmap(bitmap, (int)spriteWidth, (int)spriteHeight, true);
             }
 
             // Use first frame
@@ -76,12 +83,17 @@ public class Player extends GameObject {
     }
 
     public void resolveCollision(GameObject other) {
+        // NPC / Enemy
         // Simple push-back resolution
+        // Outdated
+
+        /*
         if (x < other.x) x = other.x - width;
         else if (x > other.x) x = other.x + other.width;
 
         if (y < other.y) y = other.y - height;
         else if (y > other.y) y = other.y + other.height;
+         */
     }
 
     private boolean isTileSolid(WorldMap world, TileSet tileSet, float px, float py, int tileSize) {
@@ -99,26 +111,53 @@ public class Player extends GameObject {
 
     public void move(WorldMap world, TileSet tileSet, int tileSize) {
 
+        float left   = getHitboxX();
+        float right  = getHitboxX() + getHitboxWidth();
+        float top    = getHitboxY();
+        float bottom = getHitboxY() + getHitboxHeight();
+
         // --- 1. Horizontal movement ---
-        float newX = x + speedX;
+        if (speedX > 0) {
+            boolean hit =
+                    isTileSolid(world, tileSet, right + speedX, top + CORNER_ALLOWANCE, tileSize) ||
+                            isTileSolid(world, tileSet, right + speedX, bottom - CORNER_ALLOWANCE, tileSize);
 
-        boolean hitX =
-                isTileSolid(world, tileSet, newX, y + CORNER_ALLOWANCE, tileSize) ||
-                        isTileSolid(world, tileSet, newX, y + height - CORNER_ALLOWANCE, tileSize);
+            if (!hit) {
+                x += speedX;
+                left   += speedX;
+                right  += speedX;
+            }
 
-        if (!hitX) {
-            x = newX;
+        } else if (speedX < 0) {
+            boolean hit =
+                    isTileSolid(world, tileSet, left + speedX, top + CORNER_ALLOWANCE, tileSize) ||
+                            isTileSolid(world, tileSet, left + speedX, bottom - CORNER_ALLOWANCE, tileSize);
+
+            if (!hit) {
+                x += speedX;
+                left   += speedX;
+                right  += speedX;
+            }
         }
 
         // --- 2. Vertical movement ---
-        float newY = y + speedY;
+        if (speedY > 0) {
+            boolean hit =
+                    isTileSolid(world, tileSet, left + CORNER_ALLOWANCE, bottom + speedY, tileSize) ||
+                            isTileSolid(world, tileSet, right - CORNER_ALLOWANCE, bottom + speedY, tileSize);
 
-        boolean hitY =
-                isTileSolid(world, tileSet, x + CORNER_ALLOWANCE, newY, tileSize) ||
-                        isTileSolid(world, tileSet, x + width - CORNER_ALLOWANCE, newY, tileSize);
+            if (!hit) {
+                y += speedY;
+            }
 
-        if (!hitY) {
-            y = newY;
+        } else if (speedY < 0) {
+            boolean hit =
+                    isTileSolid(world, tileSet, left + CORNER_ALLOWANCE, top + speedY, tileSize) ||
+                            isTileSolid(world, tileSet, right - CORNER_ALLOWANCE, top + speedY, tileSize);
+
+            if (!hit) {
+                y += speedY;
+            }
         }
     }
 }

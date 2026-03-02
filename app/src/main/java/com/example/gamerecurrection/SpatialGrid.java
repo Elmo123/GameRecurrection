@@ -35,8 +35,8 @@ public class SpatialGrid {
     }
 
     public void insert(GameObject obj) {
-        int cx = (int)(obj.getX() / cellSize);
-        int cy = (int)(obj.getY() / cellSize);
+        int cx = (int)(obj.getHitboxX() / cellSize);
+        int cy = (int)(obj.getHitboxY() / cellSize);
 
         if (cx >= 0 && cy >= 0 && cx < cols && cy < rows) {
             grid[cy][cx].add(obj);
@@ -46,8 +46,8 @@ public class SpatialGrid {
     public List<GameObject> getNearby(GameObject obj) {
         List<GameObject> result = new ArrayList<>();
 
-        int cx = (int)(obj.getX() / cellSize);
-        int cy = (int)(obj.getY() / cellSize);
+        int cx = (int)(obj.getHitboxX() / cellSize);
+        int cy = (int)(obj.getHitboxY() / cellSize);
 
         for (int y = cy - 1; y <= cy + 1; y++) {
             for (int x = cx - 1; x <= cx + 1; x++) {

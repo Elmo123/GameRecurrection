@@ -1,9 +1,17 @@
-package com.example.gamerecurrection;
+package com.example.gamerecurrection.game_objects;
 
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+
+import com.example.gamerecurrection.game_engine.objects.GameObject;
+import com.example.gamerecurrection.GameObjectType;
+import com.example.gamerecurrection.game_engine.utility.Helpers;
+import com.example.gamerecurrection.game_engine.utility.Joystick;
+import com.example.gamerecurrection.game_engine.world.Tile;
+import com.example.gamerecurrection.game_engine.world.TileSet;
+import com.example.gamerecurrection.game_engine.world.WorldMap;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -12,17 +20,22 @@ public class Player extends GameObject {
 
     private Bitmap sprite;
     private Bitmap[] frames;   // 4 animation frames
+    private int currentFrame = 0;
+    private final int frameCnt = 8;
+    private final int framesPerAnim = 4;
+    private int frameWait = 0;
     private WorldMap world;
     private TileSet tileSet;
     private int tileSize;
     private Joystick joystick;
     private static final float CORNER_ALLOWANCE = 6f;
     float speedX, speedY;
-    private final int frameCnt = 4;
+    Helpers helpers = new Helpers();
 
     public Player(Context ctx, float x, float y, WorldMap world, TileSet tileSet, int tileSize, Joystick joystick) {
         super(x, y);
-        this.spriteWidth = 192;
+        type = GameObjectType.PLAYER;
+        this.spriteWidth = 96;
         this.spriteHeight = 256;
 
         this.hitboxWidth = 96;
@@ -32,7 +45,7 @@ public class Player extends GameObject {
         this.hitboxOffsetX = (spriteWidth - hitboxWidth) / 2f;
         this.hitboxOffsetY = spriteHeight - hitboxHeight;
 
-        try (InputStream is = ctx.getAssets().open("rec_ghost_idle.png")) {
+        try (InputStream is = ctx.getAssets().open("rec_ghost_hover_sheet_grv_yrd.png")) {
             Bitmap sheet = BitmapFactory.decodeStream(is);
 
             frames = new Bitmap[frameCnt];
@@ -63,6 +76,7 @@ public class Player extends GameObject {
         speedY = joystick.dy * 5f;
 
         move(world, tileSet, tileSize);
+        updateAnimation();
     }
 
     @Override
@@ -82,6 +96,18 @@ public class Player extends GameObject {
         resolveCollision(other);
     }
 
+    public void updateAnimation () {
+        frameWait += 1;
+        if (frameWait >= framesPerAnim) {
+            frameWait = 0;
+            sprite = frames[currentFrame];
+            currentFrame += 1;
+            if (currentFrame >= frameCnt) {
+                currentFrame = 0;
+            }
+        }
+    }
+
     public void resolveCollision(GameObject other) {
         // NPC / Enemy
         // Simple push-back resolution
@@ -96,19 +122,6 @@ public class Player extends GameObject {
          */
     }
 
-    private boolean isTileSolid(WorldMap world, TileSet tileSet, float px, float py, int tileSize) {
-        int tileX = (int)(px / tileSize);
-        int tileY = (int)(py / tileSize);
-
-        if (tileX < 0 || tileY < 0 || tileX >= world.width || tileY >= world.height)
-            return true; // treat out-of-bounds as solid
-
-        int tileId = world.tiles[tileY][tileX];
-        Tile tile = tileSet.get(tileId);
-
-        return tile != null && tile.solid;
-    }
-
     public void move(WorldMap world, TileSet tileSet, int tileSize) {
 
         float left   = getHitboxX();
@@ -119,8 +132,8 @@ public class Player extends GameObject {
         // --- 1. Horizontal movement ---
         if (speedX > 0) {
             boolean hit =
-                    isTileSolid(world, tileSet, right + speedX, top + CORNER_ALLOWANCE, tileSize) ||
-                            isTileSolid(world, tileSet, right + speedX, bottom - CORNER_ALLOWANCE, tileSize);
+                    helpers.isTileSolid(world, tileSet, right + speedX, top + CORNER_ALLOWANCE, tileSize) ||
+                            helpers.isTileSolid(world, tileSet, right + speedX, bottom - CORNER_ALLOWANCE, tileSize);
 
             if (!hit) {
                 x += speedX;
@@ -130,8 +143,8 @@ public class Player extends GameObject {
 
         } else if (speedX < 0) {
             boolean hit =
-                    isTileSolid(world, tileSet, left + speedX, top + CORNER_ALLOWANCE, tileSize) ||
-                            isTileSolid(world, tileSet, left + speedX, bottom - CORNER_ALLOWANCE, tileSize);
+                    helpers.isTileSolid(world, tileSet, left + speedX, top + CORNER_ALLOWANCE, tileSize) ||
+                            helpers.isTileSolid(world, tileSet, left + speedX, bottom - CORNER_ALLOWANCE, tileSize);
 
             if (!hit) {
                 x += speedX;
@@ -143,8 +156,8 @@ public class Player extends GameObject {
         // --- 2. Vertical movement ---
         if (speedY > 0) {
             boolean hit =
-                    isTileSolid(world, tileSet, left + CORNER_ALLOWANCE, bottom + speedY, tileSize) ||
-                            isTileSolid(world, tileSet, right - CORNER_ALLOWANCE, bottom + speedY, tileSize);
+                    helpers.isTileSolid(world, tileSet, left + CORNER_ALLOWANCE, bottom + speedY, tileSize) ||
+                            helpers.isTileSolid(world, tileSet, right - CORNER_ALLOWANCE, bottom + speedY, tileSize);
 
             if (!hit) {
                 y += speedY;
@@ -152,8 +165,8 @@ public class Player extends GameObject {
 
         } else if (speedY < 0) {
             boolean hit =
-                    isTileSolid(world, tileSet, left + CORNER_ALLOWANCE, top + speedY, tileSize) ||
-                            isTileSolid(world, tileSet, right - CORNER_ALLOWANCE, top + speedY, tileSize);
+                    helpers.isTileSolid(world, tileSet, left + CORNER_ALLOWANCE, top + speedY, tileSize) ||
+                            helpers.isTileSolid(world, tileSet, right - CORNER_ALLOWANCE, top + speedY, tileSize);
 
             if (!hit) {
                 y += speedY;

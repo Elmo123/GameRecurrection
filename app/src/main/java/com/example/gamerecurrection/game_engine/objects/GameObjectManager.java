@@ -1,6 +1,7 @@
-package com.example.gamerecurrection;
+package com.example.gamerecurrection.game_engine.objects;
 
 import android.graphics.Canvas;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,6 +9,7 @@ public class GameObjectManager {
 
     private final List<GameObject> objects = new ArrayList<>();
     private SpatialGrid grid;
+    private ObjectEventListener listener;
 
     public void initSpatialGrid (int worldWidth, int worldHeight, int cellSize) {
         grid = new SpatialGrid(worldWidth, worldHeight, cellSize); // or TILE_SIZE
@@ -26,6 +28,7 @@ public class GameObjectManager {
         }
 
         handleCollisions();
+        handleDestructions();
     }
 
     private void handleCollisions() {
@@ -45,9 +48,28 @@ public class GameObjectManager {
         }
     }
 
+    private void handleDestructions() {
+        List<GameObject> toRemove = new ArrayList<>();
+
+        for (GameObject obj : objects) {
+            if (obj.isDestroyed()) {
+                if (listener != null) {
+                    listener.onObjectDestroyed(obj);
+                }
+                toRemove.add(obj);
+            }
+        }
+
+        objects.removeAll(toRemove);
+    }
+
     public void drawAll(Canvas canvas, int cameraX, int cameraY) {
         for (int i = 0; i < objects.size(); i++) {
             objects.get(i).draw(canvas, cameraX, cameraY);
         }
+    }
+
+    public void setEventListener(ObjectEventListener listener) {
+        this.listener = listener;
     }
 }

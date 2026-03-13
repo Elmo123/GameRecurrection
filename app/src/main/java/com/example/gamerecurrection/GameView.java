@@ -8,10 +8,21 @@ import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
-import org.json.JSONArray;
+import com.example.gamerecurrection.game_engine.GameLoop;
+import com.example.gamerecurrection.game_engine.objects.GameObject;
+import com.example.gamerecurrection.game_engine.objects.GameObjectManager;
+import com.example.gamerecurrection.game_engine.objects.ObjectEventListener;
+import com.example.gamerecurrection.game_objects.Orb;
+import com.example.gamerecurrection.game_objects.Player;
+import com.example.gamerecurrection.game_engine.utility.Helpers;
+import com.example.gamerecurrection.game_engine.utility.Joystick;
+import com.example.gamerecurrection.game_engine.world.Tile;
+import com.example.gamerecurrection.game_engine.world.TileSet;
+import com.example.gamerecurrection.game_engine.world.WorldMap;
+
 import org.json.JSONObject;
 
-public class GameView extends SurfaceView implements SurfaceHolder.Callback {
+public class GameView extends SurfaceView implements SurfaceHolder.Callback, ObjectEventListener {
 
     private GameLoop gameLoop;
 
@@ -48,8 +59,15 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
             player = new Player(context,spawnPointX, spawnPointY, world, tileSet, TILE_SIZE, joystick);
 
-            objectManager.initSpatialGrid(world.width, world.height, TILE_SIZE);
+            objectManager.initSpatialGrid(world.width * TILE_SIZE
+                    , world.height * TILE_SIZE
+                    , TILE_SIZE);
             objectManager.add(player);
+
+            // Testing
+            spawnNewOrb();
+
+            objectManager.setEventListener(this);
 
             /* Set tile helper
             world.setTile(32, 32, 1);
@@ -124,7 +142,6 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
                 Tile tile = tileSet.get(tileId);
 
                 if (tile == null || tile.bitmap == null) {
-                    Log.d("22:", "Tile or tile.bitmap == null");
                     continue;
                 }
 
@@ -140,5 +157,17 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     public boolean onTouchEvent(MotionEvent event) {
         joystick.onTouch(event);
         return true;
+    }
+
+    @Override
+    public void onObjectDestroyed(GameObject obj) {
+        if (obj.getObjectType() == GameObjectType.ORB) {
+            spawnNewOrb();
+        }
+    }
+
+    public void spawnNewOrb() {
+        var obj = new Orb(this.getContext(),player.getHitboxX() - 258, player.getHitboxY() - 258);
+        objectManager.add(obj);
     }
 }

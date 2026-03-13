@@ -1,4 +1,4 @@
-package com.example.gamerecurrection;
+package com.example.gamerecurrection.game_engine.world;
 
 import org.json.JSONArray;
 import org.json.JSONException;

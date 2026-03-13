@@ -1,4 +1,4 @@
-package com.example.gamerecurrection;
+package com.example.gamerecurrection.game_engine.utility;
 
 import android.graphics.Canvas;
 import android.graphics.Color;

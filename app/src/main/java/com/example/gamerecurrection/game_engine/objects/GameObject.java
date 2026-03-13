@@ -1,6 +1,8 @@
-package com.example.gamerecurrection;
+package com.example.gamerecurrection.game_engine.objects;
 
 import android.graphics.Canvas;
+
+import com.example.gamerecurrection.GameObjectType;
 
 public abstract class GameObject {
 
@@ -19,6 +21,10 @@ public abstract class GameObject {
     protected float hitboxOffsetX = 0;
     protected float hitboxOffsetY = 0;
 
+    // Type
+    protected ObjectType type;
+    private boolean destroyed = false;
+
     public GameObject(float x, float y) {
         this.x = x;
         this.y = y;
@@ -29,6 +35,9 @@ public abstract class GameObject {
     public float getHitboxY() { return y + hitboxOffsetY; }
     public int getHitboxWidth() { return hitboxWidth; }
     public int getHitboxHeight() { return hitboxHeight; }
+    public ObjectType getObjectType() { return type; }
+    public void destroy() { destroyed = true; }
+    public boolean isDestroyed() { return destroyed; }
 
     public boolean intersects(GameObject other) {
         return getHitboxX() < other.getHitboxX() + other.getHitboxWidth() &&
@@ -41,4 +50,4 @@ public abstract class GameObject {
     public abstract void draw(Canvas canvas, int cameraX, int cameraY);
 
     public void onCollision(GameObject other) {}
-}
+    }

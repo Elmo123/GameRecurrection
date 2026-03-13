@@ -1,6 +1,15 @@
 {
-  "0": { "texture": "tile_ocean.png", "solid": "true" },
-  "1": { "texture": "tile_gray.png", "solid": "false" },
+  "0": { "name": "ocean", "texture": "tile_ocean.png", "solid": "true" },
+  "1": { "name": "spawn", "texture": "tile_gray.png", "solid": "false" },
   "2": { "texture": "tile_purple.png", "solid": "false" },
-  "3": { "texture": "tile_green.png", "solid": "false" }
+  "3": { "texture": "tile_green.png", "solid": "false" },
+  "4": { "name": "tile_grv_yrd_grd_1",  "texture": "tile_grv_yrd_grd_1.png", "solid": "false" },
+  "5": { "name": "tile_grv_yrd_grd_2",  "texture": "tile_purple.png", "solid": "false" },
+  "6": { "name": "tile_grv_yrd_grd_3",  "texture": "tile_purple.png", "solid": "false" },
+  "7": { "name": "tile_grave_1",  "texture": "tile_grave_1.png", "solid": "true" },
+  "8": { "name": "tile_grave_2",  "texture": "tile_purple.png", "solid": "false" },
+  "9": { "name": "tile_grave_3",  "texture": "tile_purple.png", "solid": "false" },
+  "10": { "name": "tile_grv_yrd_tree_1",  "texture": "tile_purple.png", "solid": "false" },
+  "11": { "name": "tile_grv_yrd_tree_2",  "texture": "tile_purple.png", "solid": "false" },
+  "12": { "name": "tile_grv_yrd_bush",  "texture": "tile_purple.png", "solid": "false" }
 }

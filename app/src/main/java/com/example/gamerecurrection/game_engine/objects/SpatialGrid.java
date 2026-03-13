@@ -1,4 +1,4 @@
-package com.example.gamerecurrection;
+package com.example.gamerecurrection.game_engine.objects;
 
 import java.util.ArrayList;
 import java.util.List;

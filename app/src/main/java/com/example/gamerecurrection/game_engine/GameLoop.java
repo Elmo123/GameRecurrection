@@ -1,4 +1,6 @@
-package com.example.gamerecurrection;
+package com.example.gamerecurrection.game_engine;
+
+import com.example.gamerecurrection.GameView;
 
 public class GameLoop implements Runnable {
 

@@ -72,4 +72,8 @@ public class GameObjectManager {
     public void setEventListener(ObjectEventListener listener) {
         this.listener = listener;
     }
+
+    public List<GameObject>GetObjects () {
+        return objects;
+    }
 }

@@ -11,6 +11,8 @@ import android.view.SurfaceView;
 import com.example.gamerecurrection.game_engine.GameLoop;
 import com.example.gamerecurrection.game_engine.objects.GameObject;
 import com.example.gamerecurrection.game_engine.objects.GameObjectManager;
+import com.example.gamerecurrection.game_engine.objects.LightObject;
+import com.example.gamerecurrection.game_engine.objects.LightingEngine;
 import com.example.gamerecurrection.game_engine.objects.ObjectEventListener;
 import com.example.gamerecurrection.game_objects.Orb;
 import com.example.gamerecurrection.game_objects.Player;
@@ -32,6 +34,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback, Obj
     private int cameraX = 0;
     private int cameraY = 0;
     private GameObjectManager objectManager = new GameObjectManager();
+    private LightingEngine lighting = new LightingEngine();
     private Player player;
     private Helpers helpers = new Helpers();
     private final int TILE_SIZE = 256;
@@ -50,6 +53,10 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback, Obj
             row.put(32, 1);
             /* */
 
+            // objectManager.add(new LightObject(800, 600, 300,
+            //        Color.argb(255, 200, 200, 255), false));
+
+
             joystick = new Joystick(200, 200, 150, 60);
             world = new WorldMap(worldJson);
             tileSet = new TileSet(context, tilesJson, TILE_SIZE, TILE_SIZE);
@@ -58,6 +65,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback, Obj
             int spawnPointY = world.spawnPoint.getInt(1) * TILE_SIZE + (TILE_SIZE / 2);
 
             player = new Player(context,spawnPointX, spawnPointY, world, tileSet, TILE_SIZE, joystick);
+
 
             objectManager.initSpatialGrid(world.width * TILE_SIZE
                     , world.height * TILE_SIZE
@@ -116,6 +124,11 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback, Obj
         Canvas canvas = getHolder().lockCanvas();
         drawWorld(canvas);
         objectManager.drawAll(canvas, cameraX, cameraY);
+
+        objectManager.add(new LightObject((int)(getWidth()/2), (int)(getHeight()/2), 500,
+                Color.argb(255, 255, 200, 150), true));
+
+        lighting.draw(canvas, objectManager.GetObjects(), cameraX, cameraY);
 
         joystick.draw(canvas);
         getHolder().unlockCanvasAndPost(canvas);

@@ -15,11 +15,12 @@ public class Joystick {
 
     public float dx = 0;
     public float dy = 0;
+    public boolean visible = false;
 
     private Paint basePaint = new Paint();
     private Paint knobPaint = new Paint();
 
-    public Joystick(float x, float y, float baseR, float knobR) {
+    public Joystick(float x, float y, float baseR, float knobR, boolean visible) {
         centerX = x;
         centerY = y;
         baseRadius = baseR;
@@ -33,11 +34,25 @@ public class Joystick {
 
         knobPaint.setColor(Color.WHITE);
         knobPaint.setAlpha(180);
+
+        this.visible = visible;
+    }
+
+    public void setPosition(int x, int y) {
+        centerX = x;
+        centerY = y;
+
+        knobX = x;
+        knobY = y;
+
+        visible = true;
     }
 
     public void draw(Canvas canvas) {
-        canvas.drawCircle(centerX, centerY, baseRadius, basePaint);
-        canvas.drawCircle(knobX, knobY, knobRadius, knobPaint);
+        if (visible) {
+            canvas.drawCircle(centerX, centerY, baseRadius, basePaint);
+            canvas.drawCircle(knobX, knobY, knobRadius, knobPaint);
+        }
     }
 
     public void onTouch(MotionEvent event) {

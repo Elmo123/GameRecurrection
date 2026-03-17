@@ -57,7 +57,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback, Obj
             //        Color.argb(255, 200, 200, 255), false));
 
 
-            joystick = new Joystick(200, 200, 150, 60);
+            joystick = new Joystick(0, 0, 150, 60, false);
             world = new WorldMap(worldJson);
             tileSet = new TileSet(context, tilesJson, TILE_SIZE, TILE_SIZE);
 
@@ -102,7 +102,14 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback, Obj
     }
 
     @Override
-    public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {}
+    public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
+        // Bottom-left position
+        int margin = 150; // distance from edges
+        int joystickX = margin;
+        int joystickY = height - margin;
+
+        joystick.setPosition(joystickX, joystickY);
+    }
 
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {

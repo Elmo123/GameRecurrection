@@ -109,6 +109,11 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback, Obj
         int joystickY = height - margin;
 
         joystick.setPosition(joystickX, joystickY);
+
+
+        objectManager.add(new LightObject((int)(getWidth()/2), (int)(getHeight()/2), 500,
+                Color.argb(255, 255, 200, 150), true));
+
     }
 
     @Override
@@ -131,9 +136,6 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback, Obj
         Canvas canvas = getHolder().lockCanvas();
         drawWorld(canvas);
         objectManager.drawAll(canvas, cameraX, cameraY);
-
-        objectManager.add(new LightObject((int)(getWidth()/2), (int)(getHeight()/2), 500,
-                Color.argb(255, 255, 200, 150), true));
 
         lighting.draw(canvas, objectManager.GetObjects(), cameraX, cameraY);
 
@@ -189,5 +191,6 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback, Obj
     public void spawnNewOrb() {
         var obj = new Orb(this.getContext(),player.getHitboxX() - 258, player.getHitboxY() - 258);
         objectManager.add(obj);
+        objectManager.add(obj.light);
     }
 }

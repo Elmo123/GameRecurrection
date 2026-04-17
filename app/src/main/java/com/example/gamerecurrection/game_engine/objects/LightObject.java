@@ -18,7 +18,7 @@ public class LightObject extends GameObject {
         this.color = color;
         this.flicker = flicker;
 
-        destroy();
+        // destroy();
     }
 
     public float getCurrentRadius() {
